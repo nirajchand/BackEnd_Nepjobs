@@ -1,6 +1,6 @@
 const {Sequelize} = require("sequelize");
 
-const sequelize = new Sequelize('Nepjobs_Database','postgres','admin123',{
+const sequelize = new Sequelize('Nepjobs','postgres','admin123',{
     host: 'localhost',
     dialect: 'postgres',
     port: 5432,
@@ -18,5 +18,4 @@ async function testConnection(params) {
 }
 
 testConnection()
-
 module.exports = sequelize;
