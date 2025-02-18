@@ -12,9 +12,6 @@ const getJobs = async (req, res) => {
 
 const createJob = async (req, res) => {
   try {
-    // console.log('Request Body:', req.body); // Log the body
-    // console.log('Uploaded File:', req.file); // Log the file data
-
     const {
       employer_id,
       title,
@@ -48,7 +45,7 @@ const getJobById = async (req, res) => {
     const job = await Job.findOne({ where: { job_id: Number(job_id) } });
 
     if (!job) {
-      return res.status(400).json({ message: "Job not found fuck" });
+      return res.status(400).json({ message: "Job not found" });
     } 
 
     const fullImageUrl = job.jobLogo
@@ -61,4 +58,65 @@ const getJobById = async (req, res) => {
   } catch {}
 };
 
-export { getJobs, createJob,getJobById };
+
+const deleteJob = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    
+    const job = await Job.findByPk(jobId);
+    if (!job) {
+      return res.status(404).json({ message: "Job not found." });
+    }
+    await job.destroy();
+    res.status(200).json({ message: "Job deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting job:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+const getJobsByEmployer = async (req, res) => {
+  try {
+    const { employerId } = req.params;
+
+    const jobs = await Job.findAll({
+      where: { employer_id: employerId },
+    });
+
+    if (jobs.length === 0) {
+      return res.status(404).json({ message: "No jobs found for this employer." });
+    }
+    res.status(200).json(jobs);
+  } catch (error) {
+    console.error("Error fetching jobs:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+
+const updateJob = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const updatedData = req.body;
+
+    if (req.file) {
+      updatedData.jobLogo = `/uploads/${req.file.filename}`;
+    }
+
+
+    const job = await Job.findByPk(jobId);
+    if (!job) {
+      return res.status(404).json({ message: "Job not found." });
+    }
+
+    await job.update(updatedData);
+    res.status(200).json({ message: "Job updated successfully.", job });
+  } catch (error) {
+    console.error("Error updating job:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+
+
+export { getJobs, createJob,getJobById,getJobsByEmployer,deleteJob,updateJob};
