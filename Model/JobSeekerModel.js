@@ -1,23 +1,38 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../Database/db');
-const User = require('./User');
+import { DataTypes } from "sequelize";
+import sequelize from "../Database/db.js";
+import User from './User.js'
 
-const JobSeeker = sequelize.define('JobSeeker', {
-    seekerID: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true
+const JobSeeker = sequelize.define("JobSeeker", {
+  userId: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    references: {
+      model: User,
+      key: "id",
     },
-    skills: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    experience: {
-        type: DataTypes.STRING,
-        allowNull: true
-    }
+  },
+  profileImage: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  skills: {
+    type: DataTypes.TEXT,
+  },
+  desiredIndustry: {
+    type:DataTypes.STRING,
+    allowNull:false,
+  },
+  location: {
+    type: DataTypes.STRING,
+    allowNull:false,
+  },
+  experienceLevel: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 });
 
-JobSeeker.belongsTo(User, { foreignKey: 'userID' });
+User.hasOne(JobSeeker, { foreignKey: "userId" });
+JobSeeker.belongsTo(User, { foreignKey: "userId" });
 
-module.exports = JobSeeker;
+export default JobSeeker;
