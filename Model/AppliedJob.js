@@ -24,6 +24,11 @@ const AppliedJob = sequelize.define("AppliedJob", {
       model: Job,
       key: "job_id",
     },
+  },
+  applicationStatus: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: "Pending",
   }
 });
 
